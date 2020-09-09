@@ -4,7 +4,7 @@ metadata:
   labels:
     purpose: icam-demo
   name: productpage-subscription
-  namespace: demo-cicd-app-app
+  namespace: demo-cicd-app
 spec:
   channel: demo-cicd-source/demo-cicd-ns-channel
   packageFilter:
@@ -28,7 +28,7 @@ metadata:
   labels:
     purpose: icam-demo
   name: details-subscription
-  namespace: demo-cicd-app-app
+  namespace: demo-cicd-app
 spec:
   channel: demo-cicd-source/demo-cicd-ns-channel
   packageFilter:
@@ -52,7 +52,7 @@ metadata:
   labels:
     purpose: icam-demo
   name: reviews-subscription
-  namespace: demo-cicd-app-app
+  namespace: demo-cicd-app
 spec:
   channel: demo-cicd-source/demo-cicd-ns-channel
   packageFilter:
@@ -76,7 +76,7 @@ metadata:
   labels:
     purpose: icam-demo
   name: ratings-subscription
-  namespace: demo-cicd-app-app
+  namespace: demo-cicd-app
 spec:
   channel: demo-cicd-source/demo-cicd-ns-channel
   packageFilter:
@@ -100,7 +100,7 @@ metadata:
   labels:
     purpose: icam-demo
   name: mysqldb-subscription
-  namespace: demo-cicd-app-app
+  namespace: demo-cicd-app
 spec:
   channel: demo-cicd-source/demo-cicd-ns-channel
   packageFilter:
@@ -122,7 +122,7 @@ apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
   name: demo-cicd-app
-  namespace: demo-cicd-app-app
+  namespace: demo-cicd-app
 spec:
   selector:
     matchExpressions:

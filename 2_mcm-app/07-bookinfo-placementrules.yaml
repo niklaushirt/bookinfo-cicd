@@ -2,7 +2,7 @@ apiVersion: app.ibm.com/v1alpha1
 kind: PlacementRule
 metadata:
   name: productpage-rule
-  namespace: demo-cicd-app-app
+  namespace: demo-cicd-app
   generation: 1
   labels:
     purpose: icam-demo
@@ -16,7 +16,7 @@ apiVersion: app.ibm.com/v1alpha1
 kind: PlacementRule
 metadata:
   name: details-rule
-  namespace: demo-cicd-app-app
+  namespace: demo-cicd-app
   generation: 1
   labels:
     purpose: icam-demo
@@ -30,7 +30,7 @@ apiVersion: app.ibm.com/v1alpha1
 kind: PlacementRule
 metadata:
   name: reviews-rule
-  namespace: demo-cicd-app-app
+  namespace: demo-cicd-app
   generation: 1
   labels:
     purpose: icam-demo
@@ -44,7 +44,7 @@ apiVersion: app.ibm.com/v1alpha1
 kind: PlacementRule
 metadata:
   name: ratings-rule
-  namespace: demo-cicd-app-app
+  namespace: demo-cicd-app
   generation: 1
   labels:
     purpose: icam-demo
@@ -58,7 +58,7 @@ apiVersion: app.ibm.com/v1alpha1
 kind: PlacementRule
 metadata:
   name: mysqldb-rule
-  namespace: demo-cicd-app-app
+  namespace: demo-cicd-app
   generation: 1
   labels:
     purpose: icam-demo
