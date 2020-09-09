@@ -1,0 +1,13 @@
+# Create a Channel that declares resources that can be deployed
+# Channel can be a Namespace, Object Store Bucket, or Helm Repo
+apiVersion: app.ibm.com/v1alpha1
+kind: Channel
+metadata:
+  name: demo-cicd-ns-channel
+  namespace: demo-cicd-source
+  labels:
+    purpose: icam-demo
+    appname: demo-cicd-demo
+spec:
+  type: Namespace
+  pathname: demo-cicd-source  

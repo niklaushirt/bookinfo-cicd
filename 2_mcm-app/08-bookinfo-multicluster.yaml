@@ -1,0 +1,135 @@
+apiVersion: app.ibm.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    purpose: icam-demo
+  name: productpage-subscription
+  namespace: ddemo-cicd
+spec:
+  channel: demo-cicd-source/demo-cicd-ns-channel
+  packageFilter:
+    labelSelector:
+      matchLabels:
+        appname: demo-cicd-demo
+        component: productpage
+  placement:
+    placementRef:
+      name: productpage-rule
+      kind: PlacementRule
+  overrides:
+  - clusterName: "/"
+    clusterOverrides:
+    - path: "metadata.namespace"
+      value: demo-cicd
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    purpose: icam-demo
+  name: details-subscription
+  namespace: ddemo-cicd
+spec:
+  channel: demo-cicd-source/demo-cicd-ns-channel
+  packageFilter:
+    labelSelector:
+      matchLabels:
+        appname: demo-cicd-demo
+        component: details
+  placement:
+    placementRef:
+      name: details-rule
+      kind: PlacementRule
+  overrides:
+  - clusterName: "/"
+    clusterOverrides:
+    - path: "metadata.namespace"
+      value: demo-cicd
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    purpose: icam-demo
+  name: reviews-subscription
+  namespace: ddemo-cicd
+spec:
+  channel: demo-cicd-source/demo-cicd-ns-channel
+  packageFilter:
+    labelSelector:
+      matchLabels:
+        appname: demo-cicd-demo
+        component: reviews
+  placement:
+    placementRef:
+      name: reviews-rule
+      kind: PlacementRule
+  overrides:
+  - clusterName: "/"
+    clusterOverrides:
+    - path: "metadata.namespace"
+      value: demo-cicd
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    purpose: icam-demo
+  name: ratings-subscription
+  namespace: ddemo-cicd
+spec:
+  channel: demo-cicd-source/demo-cicd-ns-channel
+  packageFilter:
+    labelSelector:
+      matchLabels:
+        appname: demo-cicd-demo
+        component: ratings
+  placement:
+    placementRef:
+      name: ratings-rule
+      kind: PlacementRule
+  overrides:
+  - clusterName: "/"
+    clusterOverrides:
+    - path: "metadata.namespace"
+      value: demo-cicd
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    purpose: icam-demo
+  name: mysqldb-subscription
+  namespace: ddemo-cicd
+spec:
+  channel: demo-cicd-source/demo-cicd-ns-channel
+  packageFilter:
+    labelSelector:
+      matchLabels:
+        appname: demo-cicd-demo
+        component: mysqldb
+  placement:
+    placementRef:
+      name: mysqldb-rule
+      kind: PlacementRule
+  overrides:
+  - clusterName: "/"
+    clusterOverrides:
+    - path: "metadata.namespace"
+      value: demo-cicd
+---  
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: demo-cicd-app
+  namespace: ddemo-cicd
+spec:
+  selector:
+    matchExpressions:
+    - key: purpose
+      operator: In
+      values:
+      - icam-demo
+  componentKinds:
+  - group: app.ibm.com/v1alpha1
+    kind: Subscription

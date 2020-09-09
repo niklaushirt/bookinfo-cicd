@@ -1,0 +1,82 @@
+# Source: demo-cicd/charts/reviews/templates/service-account.yaml
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  annotations:
+    app.ibm.com/is-local-deployable: "false"
+  name: demo-cicd-create-load-deployable
+  namespace: demo-cicd-source
+  labels:
+    appname: demo-cicd-demo
+    release: demo-cicd-demo
+    component: productpage
+    prereq: "yes"
+spec:
+  template:
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: demo-cicd-create-load
+      namespace: default
+      labels:
+          app: demo-cicd-create-load
+    spec:
+      replicas: 0
+      selector:
+        matchLabels:
+          app: demo-cicd-create-load
+      template:
+        metadata:
+          labels:
+            app: demo-cicd-create-load
+        spec:
+          containers:
+          - image: niklaushirt/tools:1.0.1
+            imagePullPolicy: IfNotPresent
+            name: alpine
+            command:
+              - /bin/sh
+              - "-c"
+              - "ab -n 100000000 -c 100 -v 5 http://productpage.demo-cicd.svc.cluster.local:9080/"
+            ports:
+            - containerPort: 3000
+            resources:
+              requests:
+                cpu: "50m"
+                memory: "50Mi"
+              limits:
+                cpu: "50m"
+                memory: "50Mi"
+            env:
+              - name: PORT
+                value : "3000"
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  annotations:
+    app.ibm.com/is-local-deployable: "false"
+  name: demo-cicd-ingress-deployable
+  namespace: demo-cicd-source
+  labels:
+    appname: demo-cicd-demo
+    release: demo-cicd-demo
+    component: productpage
+    prereq: "yes"
+spec:
+  template:
+    kind: Ingress
+    apiVersion: networking.k8s.io/v1beta1
+    metadata:
+      name: demo-cicd-ingress
+      namespace: demo-cicd
+    spec:
+      rules:
+        - http:
+            paths:
+              - path: /
+                backend:
+                  serviceName: productpage
+                  servicePort: 9080
+    status:
+      loadBalancer: {}

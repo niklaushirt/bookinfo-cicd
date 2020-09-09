@@ -1,0 +1,70 @@
+apiVersion: app.ibm.com/v1alpha1
+kind: PlacementRule
+metadata:
+  name: productpage-rule
+  namespace: ddemo-cicd
+  generation: 1
+  labels:
+    purpose: icam-demo
+spec:
+  clusterLabels:
+    matchLabels:
+      environment: Prod
+  clusterReplicas: 1
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: PlacementRule
+metadata:
+  name: details-rule
+  namespace: ddemo-cicd
+  generation: 1
+  labels:
+    purpose: icam-demo
+spec:
+  clusterLabels:
+    matchLabels:
+      environment: Prod
+  clusterReplicas: 1
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: PlacementRule
+metadata:
+  name: reviews-rule
+  namespace: ddemo-cicd
+  generation: 1
+  labels:
+    purpose: icam-demo
+spec:
+  clusterLabels:
+    matchLabels:
+      environment: Prod
+  clusterReplicas: 1
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: PlacementRule
+metadata:
+  name: ratings-rule
+  namespace: ddemo-cicd
+  generation: 1
+  labels:
+    purpose: icam-demo
+spec:
+  clusterLabels:
+    matchLabels:
+      environment: Prod
+  clusterReplicas: 1
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: PlacementRule
+metadata:
+  name: mysqldb-rule
+  namespace: ddemo-cicd
+  generation: 1
+  labels:
+    purpose: icam-demo
+spec:
+  clusterLabels:
+    matchLabels:
+      environment: Prod
+  clusterReplicas: 1
+  

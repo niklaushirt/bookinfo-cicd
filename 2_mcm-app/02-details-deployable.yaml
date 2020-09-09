@@ -1,0 +1,215 @@
+# Source: demo-cicd/charts/details/templates/service-account.yaml
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  annotations:
+    app.ibm.com/is-local-deployable: "false"
+  name: demo-cicd-details-sa-deployable
+  namespace: demo-cicd-source
+  labels:
+    appname: demo-cicd-demo
+    release: demo-cicd-demo
+    component: details
+    prereq: "yes"
+spec:
+  template:
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: demo-cicd-details
+---
+# Source: demo-cicd/charts/details/templates/clusterrole.yaml
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  annotations:
+    app.ibm.com/is-local-deployable: "false"
+  name: demo-cicd-details-rbac-deployable
+  namespace: demo-cicd-source
+  labels:
+    appname: demo-cicd-demo
+    release: demo-cicd-demo
+    component: details
+    prereq: "yes"
+spec:
+  template:
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: details-lwdc-query
+    rules:
+    - apiGroups:
+      - ""
+      - apps
+      resources:
+      - clusters
+      - nodes
+      - services
+      - configmaps
+      - pods
+      - endpoints
+      - deployments
+      verbs:
+      - list
+      - get
+---
+# Source: demo-cicd/charts/details/templates/rolebinding.yaml
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  annotations:
+    app.ibm.com/is-local-deployable: "false"
+  name: demo-cicd-details-crb-deployable
+  namespace: demo-cicd-source
+  labels:
+    appname: demo-cicd-demo
+    release: demo-cicd-demo
+    component: details
+    prereq: "yes"
+spec:
+  template:
+    kind: ClusterRoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: details-lwdc-rolebinding
+      namespace: demo-cicd
+    subjects:
+    - kind: User
+      name: system:serviceaccount:demo-cicd:demo-cicd-details
+      apiGroup: rbac.authorization.k8s.io
+    roleRef:
+      kind: ClusterRole
+      name: details-lwdc-query
+      apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  annotations:
+    app.ibm.com/is-local-deployable: "false"
+  name: demo-cicd-details-crb2-deployable
+  namespace: demo-cicd-source
+  labels:
+    appname: demo-cicd-demo
+    release: demo-cicd-demo
+    component: details
+    prereq: "yes"
+spec:
+  template:
+    kind: ClusterRoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: details-anyuid-rolebinding
+      namespace: demo-cicd
+    subjects:
+    - kind: Group
+      name: system:serviceaccounts:demo-cicd
+      apiGroup: rbac.authorization.k8s.io
+    roleRef:
+      kind: ClusterRole
+      name: ibm-anyuid-clusterrole
+      apiGroup: rbac.authorization.k8s.io
+---
+# Source: demo-cicd/charts/details/templates/service.yaml
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  annotations:
+    app.ibm.com/is-local-deployable: "false"
+  name: demo-cicd-details-svc-deployable
+  namespace: demo-cicd-source
+  labels:
+    appname: demo-cicd-demo
+    release: demo-cicd-demo
+    component: details
+    prereq: "no"
+spec:
+  template:
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: details
+      labels:
+        app.kubernetes.io/name: details
+        app.kubernetes.io/instance: demo-cicd-demo
+    spec:
+      ports:
+        - port: 9080
+          targetPort: http
+          protocol: TCP
+          name: http
+      selector:
+        app.kubernetes.io/name: details
+        app.kubernetes.io/instance: demo-cicd-demo
+---
+# Source: demo-cicd/charts/details/templates/deployment.yaml
+apiVersion: app.ibm.com/v1alpha1
+kind: Deployable
+metadata:
+  annotations:
+    app.ibm.com/is-local-deployable: "false"
+  name: demo-cicd-details-deploy-deployable
+  namespace: demo-cicd-source
+  labels:
+    appname: demo-cicd-demo
+    release: demo-cicd-demo
+    component: details
+    prereq: "no"
+spec:
+  template:
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: demo-cicd-demo-details
+      labels:
+        app.kubernetes.io/name: details
+        app.kubernetes.io/instance: demo-cicd-demo
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: details
+          app.kubernetes.io/instance: demo-cicd-demo
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: details
+            app.kubernetes.io/instance: demo-cicd-demo
+        spec:
+          serviceAccountName: demo-cicd-details
+          containers:
+            - env:
+              - name: OPENTRACING_ENABLED
+                value: "false"
+              - name: JAEGER_SAMPLER_TYPE
+                value: "probabilistic"
+              - name: JAEGER_SAMPLER_PARAM
+                value: "1"
+              - name: LATENCY_SAMPLER_PARAM
+                value: "1"
+              name: details
+              image: "docker.io/dymaczew/examples-demo-cicd-details-v1:2020.1.0.1"
+              imagePullPolicy: Always
+              ports:
+                - name: http
+                  containerPort: 9080
+                  protocol: TCP
+              livenessProbe:
+                httpGet:
+                  path: /health
+                  port: http
+              readinessProbe:
+                httpGet:
+                  path: /health
+                  port: http
+              volumeMounts:
+              - mountPath: /opt/ibm/apm/serverconfig
+                name: global-environment
+              resources:
+                {}            
+          volumes:
+          - name: global-environment
+            secret:
+              defaultMode: 420
+              optional: true
+              secretName: icam-server-secret
